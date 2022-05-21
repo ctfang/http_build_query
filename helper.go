@@ -41,7 +41,11 @@ func encodeMap(data map[string]interface{}, keys ...string) string {
 		default:
 			bt, _ := json.Marshal(v)
 			var iData interface{}
-			_ = json.Unmarshal(bt, &iData)
+			err := json.Unmarshal(bt, &iData)
+			if err != nil {
+				fmt.Printf("http_build_query err = %v", err)
+				return ""
+			}
 
 			if iv, ok := iData.([]interface{}); ok {
 				for i, i2 := range iv {
@@ -79,9 +83,9 @@ func encodeMap(data map[string]interface{}, keys ...string) string {
 							}
 						}
 					default:
-						k = key + k + "[" + ik + "]"
+						// k = key + k + "[" + ik + "]"
 
-						paramsArr = append(paramsArr, encodeMap(i2.(map[string]interface{}), k))
+						paramsArr = append(paramsArr, encodeMap(i2.(map[string]interface{}), key+k+"["+ik+"]"))
 					}
 				}
 			}
